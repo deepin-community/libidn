@@ -1,5 +1,5 @@
 /* idn.c --- Command line interface to libidn.
- * Copyright (C) 2003-2021 Simon Josefsson
+ * Copyright (C) 2003-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -30,12 +30,12 @@
 #include <unistd.h>
 
 /* Gnulib headers. */
-#include "error.h"
+#include <error.h>
 #include "gettext.h"
 #define _(String) dgettext (PACKAGE, String)
 #define N_(String) gettext_noop (String)
-#include "progname.h"
-#include "version-etc.h"
+#include <progname.h>
+#include <version-etc.h>
 
 /* Libidn headers. */
 #include <stringprep.h>
@@ -48,9 +48,9 @@
 #include "idn_cmd.h"
 
 #define GREETING \
-  "Copyright 2002-2021 Simon Josefsson.\n"				 \
+  "Copyright 2002-2025 Simon Josefsson.\n"				 \
   "GNU Libidn is free software with ABSOLUTELY NO WARRANTY.  For more\n" \
-  "information about these matters, see <http://www.gnu.org/licenses/>.\n"
+  "information about these matters, see <https://www.gnu.org/licenses/>.\n"
 
 const char version_etc_copyright[] =
   /* Do *not* mark this string for translation.  %s is a copyright
@@ -135,6 +135,7 @@ main (int argc, char *argv[])
   setlocale (LC_ALL, "");
   set_program_name (argv[0]);
   bindtextdomain (PACKAGE, LOCALEDIR);
+  bindtextdomain ("gnulib", GNULIB_LOCALEDIR);
   textdomain (PACKAGE);
 
   if (cmdline_parser (argc, argv, &args_info) != 0)
@@ -169,7 +170,7 @@ main (int argc, char *argv[])
       (args_info.idna_to_unicode_given ? 1 : 0) +
       (args_info.nfkc_given ? 1 : 0) != 1)
     {
-      error (0, 0,
+      error (0, 0, "%s",
 	     _("only one of -s, -e, -d, -a, -u or -n can be specified"));
       usage (EXIT_FAILURE);
     }
@@ -183,19 +184,24 @@ main (int argc, char *argv[])
 
   if (!args_info.quiet_given
       && args_info.inputs_num == 0 && isatty (fileno (stdin)))
-    fprintf (stderr, _("Type each input string on a line by itself, "
-		       "terminated by a newline character.\n"));
+    fprintf (stderr, "%s",
+	     _("Type each input string on a line by itself, "
+	       "terminated by a newline character.\n"));
 
   do
     {
       if (cmdn < args_info.inputs_num)
-	line = strdup (args_info.inputs[cmdn++]);
+	{
+	  line = strdup (args_info.inputs[cmdn++]);
+	  if (!line)
+	    error (EXIT_FAILURE, errno, N_("strdup"));
+	}
       else if (getline (&line, &linelen, stdin) == -1)
 	{
 	  if (feof (stdin))
 	    break;
 
-	  error (EXIT_FAILURE, errno, _("input error"));
+	  error (EXIT_FAILURE, errno, "%s", _("input error"));
 	}
 
       if (strlen (line) > 0)
@@ -213,7 +219,7 @@ main (int argc, char *argv[])
 	  if (!q)
 	    {
 	      free (p);
-	      error (EXIT_FAILURE, 0,
+	      error (EXIT_FAILURE, 0, "%s",
 		     _("could not convert from UTF-8 to UCS-4"));
 	    }
 
@@ -238,7 +244,7 @@ main (int argc, char *argv[])
 	  if (!q)
 	    {
 	      free (r);
-	      error (EXIT_FAILURE, 0,
+	      error (EXIT_FAILURE, 0, "%s",
 		     _("could not convert from UTF-8 to UCS-4"));
 	    }
 
@@ -275,7 +281,7 @@ main (int argc, char *argv[])
 	  q = stringprep_utf8_to_ucs4 (p, -1, &len);
 	  free (p);
 	  if (!q)
-	    error (EXIT_FAILURE, 0,
+	    error (EXIT_FAILURE, 0, "%s",
 		   _("could not convert from UTF-8 to UCS-4"));
 
 	  if (args_info.debug_given)
@@ -334,7 +340,7 @@ main (int argc, char *argv[])
 	  r = stringprep_ucs4_to_utf8 (q, -1, NULL, NULL);
 	  free (q);
 	  if (!r)
-	    error (EXIT_FAILURE, 0,
+	    error (EXIT_FAILURE, 0, "%s",
 		   _("could not convert from UCS-4 to UTF-8"));
 
 	  p = stringprep_utf8_to_locale (r);
@@ -358,7 +364,7 @@ main (int argc, char *argv[])
 	  q = stringprep_utf8_to_ucs4 (p, -1, NULL);
 	  free (p);
 	  if (!q)
-	    error (EXIT_FAILURE, 0,
+	    error (EXIT_FAILURE, 0, "%s",
 		   _("could not convert from UCS-4 to UTF-8"));
 
 	  if (args_info.debug_given)
@@ -436,7 +442,7 @@ main (int argc, char *argv[])
 	  if (!q)
 	    {
 	      free (p);
-	      error (EXIT_FAILURE, 0,
+	      error (EXIT_FAILURE, 0, "%s",
 		     _("could not convert from UCS-4 to UTF-8"));
 	    }
 
@@ -492,7 +498,7 @@ main (int argc, char *argv[])
 	  r = stringprep_ucs4_to_utf8 (q, -1, NULL, NULL);
 	  free (q);
 	  if (!r)
-	    error (EXIT_FAILURE, 0,
+	    error (EXIT_FAILURE, 0, "%s",
 		   _("could not convert from UTF-8 to UCS-4"));
 
 	  p = stringprep_utf8_to_locale (r);
@@ -521,7 +527,7 @@ main (int argc, char *argv[])
 	      if (!q)
 		{
 		  free (p);
-		  error (EXIT_FAILURE, 0,
+		  error (EXIT_FAILURE, 0, "%s",
 			 _("could not convert from UTF-8 to UCS-4"));
 		}
 
@@ -535,7 +541,8 @@ main (int argc, char *argv[])
 	  r = stringprep_utf8_nfkc_normalize (p, -1);
 	  free (p);
 	  if (!r)
-	    error (EXIT_FAILURE, 0, _("could not do NFKC normalization"));
+	    error (EXIT_FAILURE, 0, "%s",
+		   _("could not do NFKC normalization"));
 
 	  if (args_info.debug_given)
 	    {
@@ -545,7 +552,7 @@ main (int argc, char *argv[])
 	      if (!q)
 		{
 		  free (r);
-		  error (EXIT_FAILURE, 0,
+		  error (EXIT_FAILURE, 0, "%s",
 			 _("could not convert from UTF-8 to UCS-4"));
 		}
 

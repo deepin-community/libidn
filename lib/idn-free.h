@@ -1,5 +1,5 @@
 /* idn-free.h --- Invoke the free function to release memory
-   Copyright (C) 2004-2021 Simon Josefsson
+   Copyright (C) 2004-2025 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -25,7 +25,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see <http://www.gnu.org/licenses/>. */
+   not, see <https://www.gnu.org/licenses/>. */
 
 #ifndef IDN_FREE_H
 # define IDN_FREE_H

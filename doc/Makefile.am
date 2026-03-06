@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002-2021 Simon Josefsson.
+# Copyright (C) 2002-2025 Simon Josefsson.
 #
 # This file is part of GNU Libidn.
 #
@@ -14,55 +14,74 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 SUBDIRS = specifications tld java cyclo
 if ENABLE_GTK_DOC
 SUBDIRS += . reference
 endif
 
-EXTRA_DIST = gdoc components.fig stamp-gdoc
+EXTRA_DIST = gdoc components.dot
 
 info_TEXINFOS = libidn.texi
 libidn_TEXINFOS = fdl-1.3.texi idn-help.texi
-libidn_TEXINFOS += texinfo.css example.txt example2.txt example3.txt example4.txt example5.txt
-libidn_TEXINFOS += $(gdoc_TEXINFOS)
-libidn_TEXINFOS += libidn-components.eps libidn-components.png	\
-			libidn-components.pdf
-
-AM_MAKEINFOHTMLFLAGS = $(AM_MAKEINFOFLAGS) \
-	--no-split --css-include=texinfo.css
+libidn_TEXINFOS += example.txt example2.txt example3.txt
+libidn_TEXINFOS += example4.txt example5.txt
+libidn_TEXINFOS += $(gdoc_TEXINFOS) libidn-components.png
 
 imagesdir = $(infodir)
 images_DATA = libidn-components.png
 
-libidn-components.eps: components.fig
-	fig2dev -L eps $< $@
+DISTCLEANFILES = \
+	libidn-components.eps libidn-components.png libidn-components.pdf
 
-libidn-components.png: components.fig
-	fig2dev -L png $< $@
+libidn-components.eps: $(srcdir)/components.dot
+	$(AM_V_GEN)$(DOT) -Nfontsize=9 -Teps < $< > $@.tmp
+	$(AM_V_at)! grep %%CreationDate $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
-libidn-components.pdf: components.fig
-	fig2dev -L pdf $< $@
+libidn-components.pdf: $(srcdir)/components.dot
+	$(AM_V_GEN)$(DOT) -Nfontsize=9 -Tpdf < $< > $@.tmp
+# A simple sed on CreationDate is no longer possible due to compression.
+# 'exiftool -CreateDate' is alternative to 'gs', but adds ~4kb to file.
+# Ghostscript add <1kb.  Why can't 'dot' avoid setting CreationDate?
+	$(AM_V_at)printf '[ /ModDate ()\n  /CreationDate ()\n  /DOCINFO pdfmark\n' > pdfmarks
+	$(AM_V_at)$(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$@.tmp2 $@.tmp pdfmarks
+	$(AM_V_at)rm -f $@.tmp pdfmarks
+	$(AM_V_at)mv $@.tmp2 $@
 
-idn-help.texi: $(top_srcdir)/src/idn.c
-	$(top_builddir)/src/idn$(EXEEXT) --help | $(GREP) '^  *-' > tmp
-	mv tmp idn-help.texi
+libidn-components.png: $(srcdir)/components.dot
+	$(AM_V_GEN)$(DOT) -Nfontsize=9 -Tpng < $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
+
+pdf-recursive: libidn-components.pdf
+dvi-recursive: libidn-components.eps
+ps-recursive: libidn-components.eps
+info-recursive: $(top_srcdir)/.version libidn-components.png
+
+idn-help.texi: idn.1
+	$(AM_V_GEN)env LANG=C $(top_builddir)/src/idn$(EXEEXT) --help | $(SED) -n -e '/^  *-/p' > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 example.txt: $(top_srcdir)/examples/example.c
-	sed -e '/* example/,/^$$/d' $< > $@.tmp && mv $@.tmp $@
+	$(AM_V_GEN)$(SED) -e '/* example/,/^$$/d' $(top_srcdir)/examples/example.c > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 example2.txt: $(top_srcdir)/examples/example2.c
-	sed -e '/* example/,/^$$/d' $< > $@.tmp && mv $@.tmp $@
+	$(AM_V_GEN)$(SED) -e '/* example/,/^$$/d' $(top_srcdir)/examples/example2.c > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 example3.txt: $(top_srcdir)/examples/example3.c
-	sed -e '/* example/,/^$$/d' $< > $@.tmp && mv $@.tmp $@
+	$(AM_V_GEN)$(SED) -e '/* example/,/^$$/d' $(top_srcdir)/examples/example3.c > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 example4.txt: $(top_srcdir)/examples/example4.c
-	sed -e '/* example/,/^$$/d' $< > $@.tmp && mv $@.tmp $@
+	$(AM_V_GEN)$(SED) -e '/* example/,/^$$/d' $(top_srcdir)/examples/example4.c > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 example5.txt: $(top_srcdir)/examples/example5.c
-	sed -e '/* example/,/^$$/d' $< > $@.tmp && mv $@.tmp $@
+	$(AM_V_GEN)$(SED) -e '/* example/,/^$$/d' $(top_srcdir)/examples/example5.c > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 BUILT_SOURCES = example.txt example2.txt example3.txt example4.txt example5.txt
 
@@ -72,7 +91,9 @@ dist_man_MANS = idn.1 $(gdoc_MANS)
 MAINTAINERCLEANFILES = $(dist_man_MANS)
 
 idn.1: $(top_srcdir)/src/idn.c $(top_srcdir)/src/idn.ggo $(top_srcdir)/.version
-	$(AM_V_GEN)$(HELP2MAN) \
+	$(MAKE) -C ../lib
+	$(MAKE) -C ../src
+	$(AM_V_GEN)env SOURCE_DATE_EPOCH=0 $(HELP2MAN) \
 		--name="Internationalized Domain Names command line tool" \
 		--output=$@ $(top_builddir)/src/idn$(EXEEXT)
 
@@ -205,12 +226,14 @@ compare-makefile:
 	diff -u $(srcdir)/Makefile.am tmp-$@ && \
 	rm -f tmp-$@
 
+EXTRA_DIST += stamp-gdoc
+
 $(gdoc_MANS) $(gdoc_TEXINFOS): stamp-gdoc
 
 clean-local:
 	-rm -f stamp-gdoc
 
-stamp-gdoc: $(top_builddir)/.version $(GDOC_SRC)
+stamp-gdoc: $(top_srcdir)/.version $(GDOC_SRC)
 	$(AM_V_at)$(MKDIR_P) man texi
 	$(AM_V_GEN)for i in `$(srcdir)/gdoc -listfunc $(GDOC_SRC)`; do \
 		$(srcdir)/gdoc -man \
@@ -221,7 +244,7 @@ stamp-gdoc: $(top_builddir)/.version $(GDOC_SRC)
 			-includefuncprefix \
 			-seeinfo $(PACKAGE) \
 			-verbatimcopying \
-			-copyright "2002-2021 Simon Josefsson" \
+			-copyright "2002-2025 Simon Josefsson" \
 			-function $$i \
 			$(GDOC_SRC) > man/$$i.3 && \
 		$(srcdir)/gdoc -texinfo -function $$i \

@@ -1,5 +1,5 @@
 /* punycode.c --- Implementation of punycode used to ASCII encode IDN's.
-   Copyright (C) 2002-2021 Simon Josefsson
+   Copyright (C) 2002-2025 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -25,7 +25,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see <http://www.gnu.org/licenses/>. */
+   not, see <https://www.gnu.org/licenses/>. */
 
 /*
  * This file is derived from RFC 3492bis written by Adam M. Costello,

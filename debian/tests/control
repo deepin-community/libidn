@@ -1,5 +1,14 @@
-Tests: libidn
-Depends: build-essential, libidn-dev, man, pkg-config
+Tests:
+ libidn,
+Depends:
+ build-essential,
+ libidn-dev,
+ man,
+ pkgconf,
 
-Tests: idn
-Depends: build-essential, idn, man
+Tests:
+ idn,
+Depends:
+ build-essential,
+ idn,
+ man,

@@ -1,5 +1,5 @@
 /* tst_symbols.c --- Test if all exported symbols are available.
- * Copyright (C) 2010-2021 Simon Josefsson
+ * Copyright (C) 2010-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,15 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-
-#include <assert.h>
 
 #include <stringprep.h>
 #include <idna.h>
@@ -33,14 +31,20 @@
 # include <tld.h>
 #endif
 
+#include "utils.h"
+
+#include <assert.h>
+
 static void
 assert_symbol_exists (const void *p)
 {
   assert (p);
+  if (!p)
+    fail ("symbol NULL?!\n");
 }
 
-int
-main (void)
+void
+doit (void)
 {
   assert_symbol_exists ((const void *) idn_free);
   assert_symbol_exists ((const void *) idna_strerror);
@@ -121,6 +125,4 @@ main (void)
   assert_symbol_exists ((const void *) tld_get_z);
   assert_symbol_exists ((const void *) tld_strerror);
 #endif
-
-  return 0;
 }

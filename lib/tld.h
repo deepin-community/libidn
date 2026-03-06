@@ -1,6 +1,6 @@
 /* tld.h --- Declarations for TLD restriction checking.
-   Copyright (C) 2004-2021 Simon Josefsson.
-   Copyright (C) 2003-2021 Free Software Foundation, Inc.
+   Copyright (C) 2004-2025 Simon Josefsson.
+   Copyright (C) 2003-2025 Free Software Foundation, Inc.
 
    Author: Thomas Jacob, Internet24.de
 
@@ -28,7 +28,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see <http://www.gnu.org/licenses/>. */
+   not, see <https://www.gnu.org/licenses/>. */
 
 #ifndef TLD_H
 # define TLD_H

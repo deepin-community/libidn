@@ -1,5 +1,5 @@
 /* tst_stringprep.c --- Self tests for stringprep().
- * Copyright (C) 2002-2021 Simon Josefsson
+ * Copyright (C) 2002-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -41,7 +41,7 @@ struct stringprep
   int rc;
 };
 
-const struct stringprep strprep[] = {
+static const struct stringprep strprep[] = {
   {"Map to nothing",
    "foo\xC2\xAD\xCD\x8F\xE1\xA0\x86\xE1\xA0\x8B"
    "bar" "\xE2\x80\x8B\xE2\x81\xA0" "baz\xEF\xB8\x80\xEF\xB8\x88"
@@ -239,18 +239,16 @@ doit (void)
 	uint32_t *l;
 	char *x = NULL;
 	l = stringprep_utf8_to_ucs4 (strprep[i].in, -1, NULL);
-	if (l)
-	  x = stringprep_ucs4_to_utf8 (l, -1, NULL, NULL);
-	free (l);
-	if (i == 29)
-	  /* Ignoring known bad UTF-8 in entry 29 */
-	  continue;
-	else if (l == NULL)
+	if (l == NULL)
 	  {
-	    fail ("bad UTF-8 in entry %u\n", i);
+	    if (i != 29)
+	      /* Ignoring known bad UTF-8 in entry 29 */
+	      fail ("bad UTF-8 in entry %u\n", i);
 	    continue;
 	  }
-	else if (strcmp (strprep[i].in, x) != 0)
+	x = stringprep_ucs4_to_utf8 (l, -1, NULL, NULL);
+	free (l);
+	if (strcmp (strprep[i].in, x) != 0)
 	  {
 	    fail ("bad UTF-8 in entry %u\n", i);
 	    if (debug)

@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2021 Simon Josefsson
+# Copyright (C) 2006-2025 Simon Josefsson
 #
 # This file is part of GNU Libidn.
 #
@@ -13,43 +13,47 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 manual_title = Internationalized Domain Names Library
 
-old_NEWS_hash = b9048a5d608511b0dc69c0799ce3c52b
+old_NEWS_hash = a64ec7fa8abeb91277eb3479d79c2272
 
-bootstrap-tools = gnulib,autoconf,automake,libtoolize,make,makeinfo,help2man,gperf,gengetopt,gtkdocize,tar,gzip
+guix = $(shell command -v guix > /dev/null && echo ,guix)
+bootstrap-tools = git,gnulib,autoconf,automake,libtoolize,make,makeinfo,help2man,gperf,gengetopt,gtkdocize,tar,gzip$(guix)
 
-local-checks-to-skip = sc_prohibit_strcmp sc_prohibit_have_config_h	\
-	sc_require_config_h sc_require_config_h_first			\
-	sc_prohibit_HAVE_MBRTOWC sc_program_name sc_trailing_blank	\
-	sc_GPL_version sc_immutable_NEWS				\
-	sc_prohibit_gnu_make_extensions sc_codespell
-VC_LIST_ALWAYS_EXCLUDE_REGEX = \
-	^(GNUmakefile|maint.mk|gtk-doc.make|m4/pkg.m4|m4/libtool.m4|doc/specifications|contrib/doxygen/Doxyfile|doc/fdl-1.3.texi|csharp/libidn.*suo|(lib/)?(gl|gltests|build-aux)/)
-
-# Explicit syntax-check exceptions.
+# make syntax-check
+local-checks-to-skip = sc_GPL_version sc_prohibit_strcmp
+local-checks-to-skip += sc_prohibit_have_config_h sc_require_config_h sc_require_config_h_first
+local-checks-to-skip += sc_prohibit_gnu_make_extensions
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^doc/specifications/.*|(fuzz/.*.(in|repro)/.*)$$
 exclude_file_name_regexp--sc_bindtextdomain = ^examples/|libc/|tests/|fuzz/
-exclude_file_name_regexp--sc_prohibit_atoi_atof = ^examples/example2.c$$
-exclude_file_name_regexp--sc_copyright_check = ^doc/libidn.texi
-exclude_file_name_regexp--sc_useless_cpp_parens = ^lib/nfkc.c$$
-exclude_file_name_regexp--sc_prohibit_strncpy = ^src/idn.c$$
-exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^fuzz/libidn_.*fuzzer.(in|repro)/.*$$
-exclude_file_name_regexp--sc_two_space_separator_in_usage = ^cfg.mk$$
+exclude_file_name_regexp--sc_file_system = ^contrib/doxygen/Doxyfile.(in|orig)$$
+exclude_file_name_regexp--sc_fsf_postal = ^(m4/pkg.m4|COPYINGv2|COPYING.LESSERv2)$$
+exclude_file_name_regexp--sc_indent = '^lib/\(gunibreak\|gunicomp\|gunidecomp\).h$$'
 exclude_file_name_regexp--sc_prohibit_always_true_header_tests = ^lib/toutf8.c$$
+exclude_file_name_regexp--sc_prohibit_atoi_atof = ^examples/example2.c$$
+exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^csharp/libidn.suo|csharp/libidn_PPC.suo$$
+exclude_file_name_regexp--sc_prohibit_strncpy = ^src/idn.c$$
+exclude_file_name_regexp--sc_trailing_blank = ^doc/components.fig|m4/pkg.m4|contrib/doxygen/Doxyfile.(in|orig)|gl/top/README-release.diff|csharp/|java/src/|lib/gen-unicode-tables.pl|lib/(gunibreak|gunicomp|gunidecomp).h$$
+exclude_file_name_regexp--sc_two_space_separator_in_usage = ^cfg.mk$$
+exclude_file_name_regexp--sc_unportable_grep_q = ^gl/top/README-release.diff$$
+exclude_file_name_regexp--sc_useless_cpp_parens = ^lib/nfkc.c$$
 
-INDENT_SOURCES = -ppi 1 `find . -name '*.[ch]'|grep -v -e ^./gl/ -e ^./fuzz/ -e ^./gltests/ -e ^./lib/gl/ -e ^./lib/gltests/ -e '^./lib/\(gunibreak.h\|gunicomp.h\|gunidecomp.h\|rfc3454.c\|rfc3454.h\|tlds.c\)$$'`
+TAR_OPTIONS += --mode=go+u,go-w --mtime=$(abs_top_srcdir)/NEWS
 
-aximport:
-	for f in m4/ax_*.m4; do \
-		wget -O $$f "https://git.savannah.gnu.org/gitweb/?p=autoconf-archive.git;a=blob_plain;f=$$f"; \
-	done
+announce_gen_args = --cksum-checksums
+url_dir_list = https://ftp.gnu.org/gnu/libidn
+
+DIST_ARCHIVES += $(shell \
+	if test -e $(srcdir)/.git && command -v git > /dev/null; then \
+		echo $(PACKAGE)-v$(VERSION)-src.tar.gz; \
+	fi)
 
 review-diff:
 	git diff `git describe --abbrev=0`.. \
-	| grep -v -e ^index -e '^diff --git' \
-	| filterdiff -p 1 -x 'build-aux/*' -x 'gl/*' -x 'gltests/*' -x 'lib/gl/*' -x 'lib/gltests/*' -x 'po/*' -x 'maint.mk' -x '.gitignore' -x '.x-sc*' -x ChangeLog -x GNUmakefile \
+	| grep -v -e '^index' -e '^deleted file mode' -e '^new file mode' \
+	| filterdiff -p 1 -x 'build-aux/*' -x 'gl/*' -x 'lib/gl/*' -x 'po/*' -x 'maint.mk' -x '.gitignore' -x .gitlab-ci.yml -x '.x-sc*' -x ChangeLog -x GNUmakefile -x .prev-version -x bootstrap -x bootstrap-funclib.sh \
 	| less
 
 my-update-copyright:
@@ -57,10 +61,33 @@ my-update-copyright:
 	make update-copyright update-copyright-env='UPDATE_COPYRIGHT_HOLDER="Simon Josefsson" UPDATE_COPYRIGHT_USE_INTERVALS=1'
 	perl -pi -e "s/2002-20.. Simon Josefsson/2002-`(date +%Y)` Simon Josefsson/" doc/Makefile.am src/idn.c
 
+aximport:
+	for f in m4/ax_*.m4; do \
+		wget -nv -O $$f "https://git.savannah.gnu.org/gitweb/?p=autoconf-archive.git;a=blob_plain;f=$$f"; \
+	done
+
+update-po: refresh-po
+	rm -fv po/*.po.in
+	for f in `ls po/*.po | grep -v quot.po`; do \
+		cp $$f $$f.in; \
+	done
+	git add po/*.po.in
+	git commit po/*.po.in \
+		-m "maint: Run 'make update-po' for new translations."
+
+CODESPELL_IGNORE_WORDS_LIST = meu,bu,te,ba,noe,nwe,mye,myu,tye,tim,ede,wich,poin
+exclude_file_name_regexp--sc_codespell = '^gnulib|doc/specifications/.*|doc/gdoc|po/.*\.po\.in|fuzz/libidn_(stringprep|toascii|tounicode)_fuzzer.in/.*$$'
 sc_codespell:
-	@if `which codespell > /dev/null`; then \
-		codespell -L tim,ede,wich `git ls-files|egrep -v '^doc/specifications/.*|doc/gdoc|fuzz/libidn_(stringprep|toascii|tounicode)_fuzzer.in/.*$$'`; \
+	@if ! command -v codespell > /dev/null; then			\
+	   echo 1>&2 '$(ME): sc_codespell: codespell is missing';	\
+	else								\
+	   codespell --ignore-words-list $(CODESPELL_IGNORE_WORDS_LIST)	\
+		$$(git -C $(srcdir) ls-files | egrep -v			\
+			$(exclude_file_name_regexp--sc_codespell));	\
 	fi
+
+sc_libtool_version_bump:
+	@git -C $(srcdir) diff v$(PREV_VERSION).. | grep '^+AC_SUBST(LT' > /dev/null
 
 # Fuzz
 

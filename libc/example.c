@@ -1,5 +1,5 @@
 /* example.c --- Example code showing how to use IDN enabled getaddrinfo().
- * Copyright (C) 2003-2021 Simon Josefsson
+ * Copyright (C) 2003-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -33,7 +33,7 @@
  * $ gcc -o example example.c -L/usr/local/glibc/lib -Wl,-rpath,/usr/local/glibc/lib -nostdinc -I/usr/local/glibc/include -I/usr/include -I/usr/lib/gcc-lib/i486-linux/3.3.3/include
  * $ CHARSET=iso-8859-1 ./example
  * locale charset `iso-8859-1'
- * gettaddrinfo(r‰ksmˆrgÂs.josefsson.org):
+ * gettaddrinfo(r√§ksm√∂rg√•s.josefsson.org):
  * address `217.13.230.178'
  * canonical name `178.230.13.217.in-addr.dgcsystems.net'
  * $
@@ -45,7 +45,7 @@
 int
 main (int argc, char *argv[])
 {
-  char *in = argc > 1 ? argv[1] : "r‰ksmˆrgÂs.josefsson.org";
+  char *in = argc > 1 ? argv[1] : "r√§ksm√∂rg√•s.josefsson.org";
   struct addrinfo hints;
   struct addrinfo *res = NULL;
   int rc;
