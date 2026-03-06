@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002-2021 Simon Josefsson.
-# Copyright (C) 2004-2021 Free Software Foundation, Inc.
+# Copyright (C) 2002-2025 Simon Josefsson.
+# Copyright (C) 2004-2025 Free Software Foundation, Inc.
 #
 # This file is part of GNU Libidn.
 #
@@ -15,13 +15,13 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 EXTRA_DIST = gen-stringprep-tables.pl gen-unicode-tables.pl gen-tld-tables.pl
 
 AM_CPPFLAGS = -I$(srcdir)/gl -Igl -DLIBIDN_BUILDING
 AM_CPPFLAGS += -DLOCALEDIR=\"$(localedir)\"
-AM_CFLAGS = $(WSTACK_CFLAGS) $(WARN_CFLAGS)
+AM_CFLAGS = $(WERROR_CFLAGS) $(WARN_LIB_CFLAGS) $(WARN_CFLAGS)
 AM_CFLAGS += $(CFLAG_VISIBILITY)
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -81,9 +81,9 @@ endif
 
 SPEC = $(top_srcdir)/doc/specifications
 
-#nfkc.c: gunibreak.h gunicomp.h gunidecomp.h
-#gunibreak.h gunicomp.h gunidecomp.h: gen-unicode-tables.pl $(SPEC)/UnicodeData-3.2.0.txt $(SPEC)/LineBreak-3.2.0.txt $(SPEC)/SpecialCasing-3.2.0.txt $(SPEC)/CaseFolding-3.2.0.txt $(SPEC)/CompositionExclusions-3.2.0.txt
-#	$(PERL) $(srcdir)/gen-unicode-tables.pl -decomp 3.2 $(SPEC)
+nfkc.c: gunibreak.h gunicomp.h gunidecomp.h
+gunibreak.h gunicomp.h gunidecomp.h: gen-unicode-tables.pl $(SPEC)/UnicodeData-3.2.0.txt $(SPEC)/LineBreak-3.2.0.txt $(SPEC)/SpecialCasing-3.2.0.txt $(SPEC)/CaseFolding-3.2.0.txt $(SPEC)/CompositionExclusions-3.2.0.txt
+	$(PERL) $(srcdir)/gen-unicode-tables.pl -decomp 3.2 $(SPEC)
 
 rfc3454.c rfc3454.h: gen-stringprep-tables.pl
 	$(PERL) $(srcdir)/gen-stringprep-tables.pl $(SPEC)/rfc3454.txt

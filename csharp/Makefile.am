@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2005-2021 Simon Josefsson.
+# Copyright (C) 2005-2025 Simon Josefsson.
 #
 # This file is part of GNU Libidn.
 #
@@ -14,7 +14,9 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+.NOTPARALLEL:
 
 CSHARPEXEC = $(SHELL) $(top_builddir)/csharpexec.sh
 CSHARPCOMP = $(SHELL) $(top_builddir)/csharpcomp.sh
@@ -49,7 +51,7 @@ INSTALL_DATA_LOCAL_TARGETS += install-dll
 UNINSTALL_LOCAL_TARGETS += uninstall-dll
 
 Libidn.dll: $(SOURCES)
-	$(CSHARPCOMP) $(CSHARPCOMPFLAGS) -o $@ \
+	$(AM_V_GEN)$(CSHARPCOMP) $(CSHARPCOMPFLAGS) -o $@ \
 		`for src in $(SOURCES); do echo $(srcdir)/$$src; done`
 
 SPEC = $(top_srcdir)/doc/specifications
@@ -70,9 +72,11 @@ GenerateTables.exe: $(SOURCES_GENERATE)
 		|| cp $(SPEC)/CompositionExclusions-3.2.0.txt CompositionExclusions.txt || true; \
 	fi
 
-RFC3454.cs CombiningClass.cs DecompositionKeys.cs DecompositionMappings.cs Composition.cs: $(GEN_SOURCES)
-	make GenerateTables.exe
-	$(CSHARPEXEC) ./GenerateTables.exe
+GEN_OUTPUTS = RFC3454.cs CombiningClass.cs DecompositionKeys.cs DecompositionMappings.cs Composition.cs
+$(GEN_OUTPUTS): $(GEN_SOURCES)
+	$(AM_V_GEN)make GenerateTables.exe
+	$(AM_V_GEN)$(CSHARPEXEC) ./GenerateTables.exe
+	$(AM_V_GEN)if test "$(srcdir)" != "$(builddir)"; then cp -v $(GEN_OUTPUTS) $(srcdir); fi
 
 install-dll-dir:
 	$(mkinstalldirs) $(DESTDIR)$(libdir)

@@ -1,5 +1,5 @@
 /* tst_idna2.c --- Self tests for idna_to_ascii_8z().
- * Copyright (C) 2002-2021 Simon Josefsson
+ * Copyright (C) 2002-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -444,7 +444,7 @@ static const struct idna idna[] = {
    },
   {"\xf0\x90\x88\x85\xc3\xad\x64\x6e\x2e\x65\x78\x61\x6d\x70\x6c\x65",
    "xn--dn-mja7734x.example"
-   /* 5-1-2 Unassinged outside BMP; zone editors should reject */
+   /* 5-1-2 Unassigned outside BMP; zone editors should reject */
    /* Don't resolve as xn--dn-mja7922x.example */
    },
   {"\xc8\xb4\xc3\xad\x64\x6e\x2e\x65\x78\x61\x6d\x70\x6c\x65",

@@ -1,34 +1,35 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/architecture.mk
 include /usr/share/dpkg/pkg-info.mk
-
-export DH_VERBOSE=1
+include /usr/share/gnulib/debian/gnulib-dpkg.mk
 
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
-ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-export HELP2MAN=true
+%:
+	dh $@ --without autoreconf --builddirectory=build
+
+pull: dh_gnulib_clone
+	./bootstrap --gnulib-srcdir=$(GNULIB_DEB_DEBIAN_GNULIB) --pull --skip-po
+
+dh_gnulib_patch: pull
+
+gen: dh_gnulib_patch
+	./bootstrap --gnulib-srcdir=$(GNULIB_DEB_DEBIAN_GNULIB) --gen
+
+execute_before_dh_auto_configure: gen
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+	dpkg-architecture -a$(DEB_BUILD_ARCH) -f -c dh_auto_configure --reload-all-buildenv-variables --builddirectory=build-native -- --disable-gtk-doc
+	dpkg-architecture -a$(DEB_BUILD_ARCH) -f -c dh_auto_build --builddirectory=build-native
+	mkdir -p build/doc
+	cp build-native/doc/idn.1 build-native/doc/idn-help.texi build/doc/
 endif
 
-%:
-	dh $@ --builddirectory=build
-
-override_dh_autoreconf:
-	GTKDOCIZE=true dh_autoreconf
+CONFIGURE_FLAGS = \
+	--disable-rpath \
+	--with-packager=Debian \
+	--with-packager-bug-reports=https://bugs.debian.org/ \
+	--with-packager-version="$(DEB_VERSION)"
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-packager=Debian \
-		--with-packager-version=$(DEB_VERSION) \
-		--with-packager-bug-reports=https://bugs.debian.org/ \
-		--disable-silent-rules \
-		--disable-java
-
-override_dh_auto_install:
-	dh_auto_install
-
-override_dh_install:
-	dh_install
-ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-	mkdir -p debian/tmp/usr/share/man/man1/
-	cp -fv doc/idn.1 debian/tmp/usr/share/man/man1/idn.1
-endif
+	dh_auto_configure -- $(CONFIGURE_FLAGS)

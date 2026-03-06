@@ -1,5 +1,5 @@
 /* stringprep.c --- Core stringprep implementation.
-   Copyright (C) 2002-2021 Simon Josefsson
+   Copyright (C) 2002-2025 Simon Josefsson
 
    This file is part of GNU Libidn.
 
@@ -25,7 +25,7 @@
 
    You should have received copies of the GNU General Public License and
    the GNU Lesser General Public License along with this program.  If
-   not, see <http://www.gnu.org/licenses/>. */
+   not, see <https://www.gnu.org/licenses/>. */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -37,8 +37,7 @@
 #include "stringprep.h"
 
 static int
-_compare_table_element (const uint32_t * c,
-			const Stringprep_table_element * e)
+_compare_table_element (const uint32_t *c, const Stringprep_table_element *e)
 {
   if (*c < e->start)
     return -1;
@@ -49,7 +48,7 @@ _compare_table_element (const uint32_t * c,
 
 static ssize_t
 stringprep_find_character_in_table (uint32_t ucs4,
-				    const Stringprep_table_element * table,
+				    const Stringprep_table_element *table,
 				    size_t table_size)
 {
   /* This is where typical uses of Libidn spends very close to all CPU
@@ -86,10 +85,10 @@ stringprep_find_character_in_table (uint32_t ucs4,
 }
 
 static ssize_t
-stringprep_find_string_in_table (uint32_t * ucs4,
+stringprep_find_string_in_table (uint32_t *ucs4,
 				 size_t ucs4len,
 				 size_t *tablepos,
-				 const Stringprep_table_element * table,
+				 const Stringprep_table_element *table,
 				 size_t table_size)
 {
   size_t j;
@@ -109,10 +108,10 @@ stringprep_find_string_in_table (uint32_t * ucs4,
 }
 
 static int
-stringprep_apply_table_to_string (uint32_t * ucs4,
+stringprep_apply_table_to_string (uint32_t *ucs4,
 				  size_t *ucs4len,
 				  size_t maxucs4len,
-				  const Stringprep_table_element * table,
+				  const Stringprep_table_element *table,
 				  size_t table_size)
 {
   ssize_t pos;
@@ -179,9 +178,9 @@ stringprep_apply_table_to_string (uint32_t * ucs4,
  *   #Stringprep_rc error code.
  **/
 int
-stringprep_4i (uint32_t * ucs4, size_t *len, size_t maxucs4len,
+stringprep_4i (uint32_t *ucs4, size_t *len, size_t maxucs4len,
 	       Stringprep_profile_flags flags,
-	       const Stringprep_profile * profile)
+	       const Stringprep_profile *profile)
 {
   size_t i, j;
   ssize_t k;
@@ -329,9 +328,9 @@ stringprep_4i (uint32_t * ucs4, size_t *len, size_t maxucs4len,
 }
 
 static int
-stringprep_4zi_1 (uint32_t * ucs4, size_t ucs4len, size_t maxucs4len,
+stringprep_4zi_1 (uint32_t *ucs4, size_t ucs4len, size_t maxucs4len,
 		  Stringprep_profile_flags flags,
-		  const Stringprep_profile * profile)
+		  const Stringprep_profile *profile)
 {
   int rc;
 
@@ -372,9 +371,9 @@ stringprep_4zi_1 (uint32_t * ucs4, size_t ucs4len, size_t maxucs4len,
  *   #Stringprep_rc error code.
  **/
 int
-stringprep_4zi (uint32_t * ucs4, size_t maxucs4len,
+stringprep_4zi (uint32_t *ucs4, size_t maxucs4len,
 		Stringprep_profile_flags flags,
-		const Stringprep_profile * profile)
+		const Stringprep_profile *profile)
 {
   size_t ucs4len;
 
@@ -386,7 +385,7 @@ stringprep_4zi (uint32_t * ucs4, size_t maxucs4len,
 
 /**
  * stringprep:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  * @flags: a #Stringprep_profile_flags value, or 0.
  * @profile: pointer to #Stringprep_profile to use.
@@ -414,8 +413,7 @@ stringprep_4zi (uint32_t * ucs4, size_t maxucs4len,
 int
 stringprep (char *in,
 	    size_t maxlen,
-	    Stringprep_profile_flags flags,
-	    const Stringprep_profile * profile)
+	    Stringprep_profile_flags flags, const Stringprep_profile *profile)
 {
   int rc;
   char *utf8 = NULL;
@@ -573,7 +571,7 @@ stringprep_profile (const char *in,
  * C++, Emacs Lisp, Python and Java.
  *
  * The project web page:\n
- * http://www.gnu.org/software/libidn/
+ * https://www.gnu.org/software/libidn/
  *
  * The software archive:\n
  * ftp://alpha.gnu.org/pub/gnu/libidn/
@@ -685,7 +683,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_nameprep:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the nameprep profile.
@@ -696,7 +694,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_nameprep_no_unassigned:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the nameprep profile.
@@ -706,7 +704,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_iscsi:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the draft iSCSI
@@ -715,7 +713,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_plain:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the draft SASL
@@ -724,7 +722,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_kerberos5:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the draft Kerberos 5
@@ -734,7 +732,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_xmpp_nodeprep:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the draft XMPP node
@@ -743,7 +741,7 @@ stringprep_profile (const char *in,
 
 /**
  * stringprep_xmpp_resourceprep:
- * @in: input/ouput array with string to prepare.
+ * @in: input/output array with string to prepare.
  * @maxlen: maximum length of input/output array.
  *
  * Prepare the input UTF-8 string according to the draft XMPP resource

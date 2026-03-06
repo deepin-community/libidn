@@ -1,5 +1,5 @@
 /* example2.c --- Example code showing how to use punycode.
- * Copyright (C) 2002-2021 Simon Josefsson
+ * Copyright (C) 2002-2025 Simon Josefsson
  * Copyright (C) 2002  Adam M. Costello
  *
  * This file is part of GNU Libidn.
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -112,8 +112,8 @@ main (int argc, char **argv)
   if (argv[1][1] == 'e')
     {
       uint32_t input[unicode_max_length];
-      unsigned long codept;
-      char output[ace_max_length + 1], uplus[3];
+      unsigned long codept = 0;
+      char output[ace_max_length + 1], uplus[3] = "";
       int c;
 
       /* Read the input code points: */

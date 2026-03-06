@@ -1,5 +1,5 @@
 /* tst_tld.c --- Self tests for tld_*().
- * Copyright (C) 2004-2021 Simon Josefsson
+ * Copyright (C) 2004-2025 Simon Josefsson
  *
  * This file is part of GNU Libidn.
  *
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -70,7 +70,7 @@ static const Tld_table _tld_fr_override = {
 };
 
 /* Main array */
-const Tld_table *my_tld_tables[] = {
+static const Tld_table *my_tld_tables[] = {
   &_tld_fr_override,
   NULL
 };
