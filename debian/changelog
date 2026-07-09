@@ -1,3 +1,10 @@
+libidn (CVE-2026-57053+fix1) unstable; urgency=high
+
+  * Fix CVE-2026-57053: fix buffer overread in IDNA xn-- string processing
+    (Closes: CVE-2026-57053)
+
+ -- deepin-ci-robot <packages@deepin.org>  Fri, 10 Jul 2026 03:13:35 +0800
+
 libidn (1.43-2) unstable; urgency=medium
 
   * Add pull/gen make deps.  Closes: #1105425.
