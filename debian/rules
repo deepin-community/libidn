@@ -18,6 +18,12 @@ gen: dh_gnulib_patch
 	./bootstrap --gnulib-srcdir=$(GNULIB_DEB_DEBIAN_GNULIB) --gen
 
 execute_before_dh_auto_configure: gen
+	# Add sw_64 (Sunway) architecture support to config.sub
+	if [ -f build-aux/config.sub ]; then \
+		if ! grep -q 'sw_64' build-aux/config.sub; then \
+			sed -i '/| x86_64 \\/a| sw_64 \\' build-aux/config.sub; \
+		fi \
+	fi
 ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
 	dpkg-architecture -a$(DEB_BUILD_ARCH) -f -c dh_auto_configure --reload-all-buildenv-variables --builddirectory=build-native -- --disable-gtk-doc
 	dpkg-architecture -a$(DEB_BUILD_ARCH) -f -c dh_auto_build --builddirectory=build-native

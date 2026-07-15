@@ -1,3 +1,14 @@
+libidn (1.43-2deepin1) unstable; urgency=medium
+
+  * Add sw64 architecture support
+  *   - Add sw_64 (Sunway) CPU type to config.sub
+  *   - Fixes configure error on sw64 systems:
+  *     "/bin/bash ../build-aux/config.sub sw_64-linux-gnu failed"
+  *   - The sw64 (Sunway) architecture requires explicit recognition
+  *     in config.sub for the configure script to succeed
+
+ -- lichenggang <lichenggang@uniontech.com>  Wed, 15 Jul 2026 18:58:12 +0800
+
 libidn (1.43-2) unstable; urgency=medium
 
   * Add pull/gen make deps.  Closes: #1105425.
