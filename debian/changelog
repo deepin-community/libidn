@@ -1,3 +1,9 @@
+libidn (1.43-2deepin2) unstable; urgency=medium
+
+  * fix(cve): CVE-2026-57053
+
+ -- deepin-ci-robot <packages@deepin.org>  Thu, 16 Jul 2026 22:49:28 +0800
+
 libidn (1.43-2deepin1) unstable; urgency=medium
 
   * Add sw64 architecture support
